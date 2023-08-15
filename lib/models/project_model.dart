@@ -32,6 +32,27 @@ extension ConvertProjectStatus on String {
   }
 }
 
+enum ProjectSource {
+  web('web'),
+  call('call');
+
+  final String type;
+  const ProjectSource(this.type);
+}
+
+extension ConvertProjectSource on String {
+  ProjectSource toProjectSourceEnum() {
+    switch (this) {
+      case 'web':
+        return ProjectSource.web;
+      case 'call':
+        return ProjectSource.call;
+      default:
+        return ProjectSource.web;
+    }
+  }
+}
+
 class ProjectModel {
   final String id;
   final String coverPath;
@@ -39,6 +60,7 @@ class ProjectModel {
   final List<String> stumpIds;
   final int stumpCount;
   final ProjectStatus status;
+  final ProjectSource source;
   final String note;
   final DateTime firstCall;
   final DateTime nextCall;
@@ -52,6 +74,7 @@ class ProjectModel {
     required this.stumpIds,
     required this.stumpCount,
     required this.status,
+    required this.source,
     required this.note,
     required this.firstCall,
     required this.nextCall,
@@ -67,6 +90,7 @@ class ProjectModel {
     List<String>? stumpIds,
     int? stumpCount,
     ProjectStatus? status,
+    ProjectSource? source,
     String? note,
     DateTime? firstCall,
     DateTime? nextCall,
@@ -81,6 +105,7 @@ class ProjectModel {
       stumpIds: stumpIds ?? this.stumpIds,
       stumpCount: stumpCount ?? this.stumpCount,
       status: status ?? this.status,
+      source: source ?? this.source,
       note: note ?? this.note,
       firstCall: firstCall ?? this.firstCall,
       nextCall: nextCall ?? this.nextCall,
@@ -99,6 +124,7 @@ class ProjectModel {
     result.addAll({'stumpIds': stumpIds});
     result.addAll({'stumpCount': stumpCount});
     result.addAll({'status': status.type});
+    result.addAll({'source': source.type});
     result.addAll({'note': note});
     result.addAll({'firstCall': firstCall.millisecondsSinceEpoch});
     result.addAll({'nextCall': nextCall.millisecondsSinceEpoch});
@@ -117,6 +143,7 @@ class ProjectModel {
       stumpIds: List<String>.from(map['stumpIds']),
       stumpCount: map['stumpCount']?.toInt() ?? 0,
       status: (map['status'] as String).toProjectTypeEnum(),
+      source: (map['source'] as String).toProjectSourceEnum(),
       note: map['note'] ?? '',
       firstCall: DateTime.fromMillisecondsSinceEpoch(map['firstCall']),
       nextCall: DateTime.fromMillisecondsSinceEpoch(map['nextCall']),
@@ -133,7 +160,7 @@ class ProjectModel {
 
   @override
   String toString() {
-    return 'ProjectModel(id: $id, coverPath: $coverPath, customerId: $customerId, stumpIds: $stumpIds, stumpCount: $stumpCount, status: $status, note: $note, firstCall: $firstCall, nextCall: $nextCall, lat: $lat, lon: $lon, address: $address)';
+    return 'ProjectModel(id: $id, coverPath: $coverPath, customerId: $customerId, stumpIds: $stumpIds, stumpCount: $stumpCount, status: $status, source: $source, note: $note, firstCall: $firstCall, nextCall: $nextCall, lat: $lat, lon: $lon, address: $address)';
   }
 
   @override
@@ -147,6 +174,7 @@ class ProjectModel {
         listEquals(other.stumpIds, stumpIds) &&
         other.stumpCount == stumpCount &&
         other.status == status &&
+        other.source == source &&
         other.note == note &&
         other.firstCall == firstCall &&
         other.nextCall == nextCall &&
@@ -163,6 +191,7 @@ class ProjectModel {
         stumpIds.hashCode ^
         stumpCount.hashCode ^
         status.hashCode ^
+        source.hashCode ^
         note.hashCode ^
         firstCall.hashCode ^
         nextCall.hashCode ^

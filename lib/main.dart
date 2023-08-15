@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/dashboard/views/dashboard_view.dart';
 
 void main() {
-  runApp(const StumperApp());
+  runApp(const ProviderScope(child: StumperApp()));
 }
 
 class StumperApp extends StatelessWidget {
